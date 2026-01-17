@@ -8,113 +8,71 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
+:root{
   --blue:#00c6ff;
   --green:#00ff9d;
   --dark:#020617;
+  --red:#ff3b3b;
 }
 
-body {
+body{
   margin:0;
   background:#05060a;
   color:white;
   font-family:'Orbitron',system-ui,sans-serif;
 }
 
-/* SPLASH */
-#splash {
-  position:fixed;
-  inset:0;
-  background:linear-gradient(135deg,#003973,#00c6ff,#00ff9d,#003973);
-  background-size:300% 300%;
-  animation:flow 12s ease infinite;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-}
-@keyframes flow {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-#splashContent {
-  text-align:center;
-}
-#splash h1 {
-  font-family:'Bebas Neue';
-  font-size:3rem;
-  letter-spacing:4px;
-}
-#splash button {
-  margin-top:25px;
-  padding:16px 42px;
-  font-family:'Orbitron';
-  background:rgba(255,255,255,.18);
-  border:1px solid rgba(255,255,255,.35);
-  border-radius:40px;
-  backdrop-filter:blur(14px);
-  color:white;
-}
-
-/* HEADER */
-header {
+/* header */
+header{
   background:var(--dark);
   padding:16px;
   text-align:center;
 }
-header h1 {
+header h1{
   font-family:'Bebas Neue';
   letter-spacing:2px;
-  margin-bottom:12px;
   background:linear-gradient(90deg,var(--blue),var(--green));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 
-/* DROPDOWN */
-#filterWrap {
-  display:flex;
-  justify-content:center;
-  margin-bottom:8px;
-}
-select {
-  background:#0b1025;
-  color:white;
-  border:1px solid #333;
-  padding:10px 16px;
-  border-radius:20px;
-  font-family:'Orbitron';
-}
-
-/* GALLERY */
-#gallery {
+/* gallery */
+#gallery{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:18px;
   padding:18px;
 }
-.art {
+.art{
   background:#0b1025;
   border-radius:14px;
   padding:10px;
+  position:relative;
   cursor:pointer;
 }
-.art img {
+.art img{
   width:100%;
   max-height:280px;
   object-fit:contain;
 }
-.detailHint {
+
+/* offer banner */
+.offerBanner{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--red);
+  color:white;
   text-align:center;
-  font-size:0.75rem;
-  opacity:0.65;
-  margin-top:6px;
+  font-size:.85rem;
+  padding:6px;
+  border-radius:0 0 14px 14px;
   font-family:'Bebas Neue';
 }
 
-/* VIEWER */
-#viewer {
+/* viewer */
+#viewer{
   display:none;
   position:fixed;
   inset:0;
@@ -122,102 +80,71 @@ select {
   z-index:999;
   overflow-y:auto;
 }
-#viewer img {
+#viewer img{
   width:100%;
   max-height:60vh;
   object-fit:contain;
   cursor:pointer;
 }
-#viewerContent {
+#viewerContent{
   padding:16px;
 }
-#backBtn {
-  padding:14px;
-  background:var(--dark);
+#backBtn{
+  background:none;
   border:none;
   color:var(--blue);
   font-family:'Orbitron';
-  cursor:pointer;
-}
-.fullscreenHint {
-  font-size:0.75rem;
-  opacity:0.6;
-  margin-top:6px;
-  text-align:center;
-}
-#price {
-  font-size:1.3rem;
-  color:var(--green);
+  font-size:1rem;
 }
 
-/* FORM */
-form {
-  margin-top:16px;
-}
-input, textarea {
+/* form */
+input[type=range]{
   width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:10px;
-  border:none;
-  font-family:'Orbitron';
 }
-button.submit {
-  margin-top:14px;
+.rangeValue{
+  text-align:center;
+  font-size:1.4rem;
+  color:var(--green);
+  margin:10px 0;
+}
+button.submit{
   width:100%;
   padding:16px;
   border:none;
   border-radius:30px;
   background:linear-gradient(90deg,var(--blue),var(--green));
   font-family:'Orbitron';
-  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-  <div id="splashContent">
-    <h1>Art by Slade Edwards</h1>
-    <button onclick="enterSite()">View Art</button>
-  </div>
-</div>
-
 <header>
   <h1>Art by Slade Edwards</h1>
-  <div id="filterWrap">
-    <select id="typeFilter" onchange="applyFilter()">
-      <option value="All">All</option>
-      <option value="Graphite">Graphite</option>
-      <option value="Spray Paintings">Spray Paintings</option>
-      <option value="Paintings">Paintings</option>
-    </select>
-  </div>
 </header>
 
 <div id="gallery"></div>
 
-<!-- VIEWER -->
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
-
   <img id="viewImage" onclick="goFullscreen()">
-  <div class="fullscreenHint">Click image to view in full screen</div>
 
   <div id="viewerContent">
     <h2 id="viewTitle"></h2>
-    <p id="viewDetails"></p>
-    <p id="price"></p>
 
     <form action="https://formspree.io/f/xgoooqgd" method="POST">
       <input type="hidden" name="Artwork" id="artName">
+
+      <label>Offer Amount ($)</label>
+      <input type="range" min="20" max="500" value="100" id="offerRange"
+             oninput="updateOffer()" name="Offer">
+      <div class="rangeValue">$<span id="offerValue">100</span></div>
+
       <label>Phone Number</label>
       <input type="tel" name="Phone" required>
-      <label>Message (optional)</label>
-      <textarea name="Message"></textarea>
-      <button class="submit" type="submit">Request to Buy</button>
+
+      <button class="submit" type="submit">Send Offer</button>
     </form>
   </div>
 </div>
@@ -225,10 +152,6 @@ button.submit {
 <script>
 const repo="sladenb23/sladenb23.github.io";
 let allArt=[];
-
-function enterSite(){
-  document.getElementById("splash").style.display="none";
-}
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r=>r.json())
@@ -240,30 +163,23 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
     if(!img)return null;
     return{
       title:i.title,
-      price:get("Price:"),
-      details:get("Details:")||"",
-      type:get("Type:")||"Other",
-      image:img
+      image:img,
+      offer:get("Offer:")
     };
   }).filter(Boolean);
-  render("All");
+  render();
 });
 
-function applyFilter(){
-  render(document.getElementById("typeFilter").value);
-}
-
-function render(type){
+function render(){
   const g=document.getElementById("gallery");
   g.innerHTML="";
-  allArt.filter(a=>type==="All"||a.type===type)
-  .forEach(a=>{
+  allArt.forEach(a=>{
     const d=document.createElement("div");
     d.className="art";
-    d.innerHTML=`
-      <img src="${a.image}">
-      <div class="detailHint">Click to see more details</div>
-    `;
+    d.innerHTML=`<img src="${a.image}">`;
+    if(a.offer){
+      d.innerHTML+=`<div class="offerBanner">Highest offer: $${a.offer}</div>`;
+    }
     d.onclick=()=>openViewer(a);
     g.appendChild(d);
   });
@@ -272,14 +188,17 @@ function render(type){
 function openViewer(a){
   document.getElementById("viewImage").src=a.image;
   document.getElementById("viewTitle").innerText=a.title;
-  document.getElementById("viewDetails").innerText=a.details;
-  document.getElementById("price").innerText="$"+a.price;
   document.getElementById("artName").value=a.title;
   document.getElementById("viewer").style.display="block";
 }
 
 function closeViewer(){
   document.getElementById("viewer").style.display="none";
+}
+
+function updateOffer(){
+  document.getElementById("offerValue").innerText =
+    document.getElementById("offerRange").value;
 }
 
 function goFullscreen(){
