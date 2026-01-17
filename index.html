@@ -163,7 +163,7 @@ select{
 /* FORM */
 form{margin-top:18px}
 label{display:block;margin-top:12px}
-input, textarea, select{
+input, textarea{
   width:100%;
   padding:12px;
   margin-top:6px;
@@ -220,11 +220,14 @@ button.submit{
     <form action="https://formspree.io/f/xgoooqgd" method="POST">
       <input type="hidden" name="Artwork" id="artName">
 
-      <label>Your Offer</label>
-      <select name="Offer" required>
-        <option value="">Select price</option>
-        ${Array.from({length:49},(_,i)=>`<option value="${20+i*10}">$${20+i*10}</option>`).join("")}
-      </select>
+      <label>Your Offer (minimum $20)</label>
+      <input
+        type="number"
+        name="Offer"
+        min="20"
+        placeholder="Enter your offer"
+        required
+      >
 
       <label>Phone Number</label>
       <input type="tel" name="Phone" required>
