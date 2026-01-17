@@ -1,85 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>SLADEN ART</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<title>SLADEN ART</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0f0f0f;
-      color: #ffffff;
-    }
+<style>
+body {
+  margin: 0;
+  background: #0f0f0f;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+}
 
-    header {
-      position: sticky;
-      top: 0;
-      background: rgba(15,15,15,0.95);
-      padding: 20px;
-      text-align: center;
-      z-index: 10;
-      border-bottom: 1px solid #222;
-    }
+header {
+  position: sticky;
+  top: 0;
+  background: rgba(15,15,15,0.95);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #222;
+  z-index: 10;
+}
 
-    h1 {
-      margin: 0 0 15px 0;
-      letter-spacing: 3px;
-      font-weight: 700;
-    }
+h1 {
+  margin: 0 0 15px 0;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
 
-    select {
-      background: #1a1a1a;
-      color: white;
-      border: 1px solid #333;
-      padding: 10px 14px;
-      font-size: 14px;
-      border-radius: 6px;
-    }
+select {
+  background: #1a1a1a;
+  color: white;
+  border: 1px solid #333;
+  padding: 10px 14px;
+  border-radius: 6px;
+}
 
-    #gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      padding: 25px;
-    }
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 25px;
+}
 
-    .art {
-      background: #151515;
-      border-radius: 12px;
-      overflow: hidden;
-      transition: transform 0.25s ease;
-    }
+.art {
+  background: #151515;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
 
-    .art:hover {
-      transform: scale(1.02);
-    }
+.art:hover {
+  transform: scale(1.02);
+}
 
-    .art img {
-      width: 100%;
-      height: auto;
-      max-height: 420px;
-      object-fit: contain;
-      background: #0f0f0f;
-      display: block;
-    }
+.art img {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: contain;
+  background: #0f0f0f;
+  pointer-events: none;
+}
 
-    .price {
-      padding: 12px;
-      text-align: center;
-      font-size: 14px;
-      letter-spacing: 1px;
-      background: #111;
-    }
-  </style>
+/* VIEWER */
+#viewer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#viewer img {
+  max-width: 90%;
+  max-height: 70vh;
+  object-fit: contain;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+#info {
+  text-align: center;
+  margin-top: 20px;
+  max-width: 90%;
+}
+
+button {
+  background: #222;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  margin: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #333;
+}
+</style>
 </head>
 
-<body>
+<body oncontextmenu="return false">
 
 <header>
   <h1>SLADEN ART</h1>
-
   <select id="filter">
     <option value="all">All</option>
     <option value="Graphite">Graphite</option>
@@ -90,46 +122,91 @@
 
 <div id="gallery"></div>
 
+<div id="viewer">
+  <img id="viewImage">
+  <div id="info">
+    <h2 id="viewTitle"></h2>
+    <p id="viewDetails"></p>
+    <p id="viewPrice"></p>
+    <button onclick="zoom(1.25)">Zoom +</button>
+    <button onclick="zoom(0.8)">Zoom −</button>
+    <br>
+    <a id="payLink" target="_blank">
+      <button>Buy with Venmo</button>
+    </a>
+    <br>
+    <button onclick="closeViewer()">Close</button>
+  </div>
+</div>
+
 <script>
 const repo = "sladenb23/sladenb23.github.io";
+let scale = 1;
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
-  .then(r => r.json())
-  .then(issues => {
-    const gallery = document.getElementById("gallery");
-    const filter = document.getElementById("filter");
+.then(r => r.json())
+.then(issues => {
+  const gallery = document.getElementById("gallery");
+  const filter = document.getElementById("filter");
 
-    const art = issues
-      .filter(i => !i.pull_request)
-      .map(issue => {
-        const lines = issue.body.split("\n");
-        const price = lines.find(l => l.startsWith("Price:"))?.replace("Price:", "").trim();
-        const image = lines.find(l => l.startsWith("Image:"))?.replace("Image:", "").trim();
-        const type = lines.find(l => l.startsWith("Type:"))?.replace("Type:", "").trim();
+  const art = issues
+    .filter(i => !i.pull_request)
+    .map(issue => {
+      const lines = issue.body.split("\n");
+      const get = k => lines.find(l => l.startsWith(k))?.replace(k,"").trim();
+      const image = get("Image:");
+      if (!image) return null;
 
-        if (!image || !type) return null;
+      return {
+        title: issue.title,
+        price: get("Price:"),
+        details: get("Details:") || "",
+        type: get("Type:") || "Other",
+        image
+      };
+    })
+    .filter(Boolean);
 
-        return { title: issue.title, price, image, type };
-      })
-      .filter(Boolean);
+  function render(type) {
+    gallery.innerHTML = "";
+    art
+      .filter(a => type === "all" || a.type === type)
+      .forEach(a => {
+        const div = document.createElement("div");
+        div.className = "art";
+        div.innerHTML = `<img src="${a.image}" alt="">`;
+        div.onclick = () => openViewer(a);
+        gallery.appendChild(div);
+      });
+  }
 
-    function render(selected) {
-      gallery.innerHTML = "";
-      art
-        .filter(a => selected === "all" || a.type === selected)
-        .forEach(a => {
-          gallery.innerHTML += `
-            <div class="art">
-              <img src="${a.image}">
-              <div class="price">$${a.price}</div>
-            </div>
-          `;
-        });
-    }
+  filter.onchange = e => render(e.target.value);
+  render("all");
+});
 
-    filter.addEventListener("change", e => render(e.target.value));
-    render("all");
-  });
+function openViewer(a) {
+  scale = 1;
+  const img = document.getElementById("viewImage");
+  img.src = a.image;
+  img.style.transform = "scale(1)";
+  document.getElementById("viewTitle").innerText = a.title;
+  document.getElementById("viewDetails").innerText = a.details;
+  document.getElementById("viewPrice").innerText = `$${a.price}`;
+
+  document.getElementById("payLink").href =
+    `https://venmo.com/sladenblake8?txn=pay&amount=${a.price}`;
+
+  document.getElementById("viewer").style.display = "flex";
+}
+
+function closeViewer() {
+  document.getElementById("viewer").style.display = "none";
+}
+
+function zoom(f) {
+  scale *= f;
+  document.getElementById("viewImage").style.transform = `scale(${scale})`;
+}
 </script>
 
 </body>
