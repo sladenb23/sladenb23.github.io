@@ -19,254 +19,159 @@ body {
   background: #05060a;
   color: white;
   font-family: 'Orbitron', system-ui, sans-serif;
-  overflow-x: hidden;
   user-select: none;
 }
 
-/* SPLASH */
+/* SPLASH (mobile safe) */
 #splash {
   position: fixed;
   inset: 0;
-  background: linear-gradient(120deg, #020617, #020617, #0b1025);
-  overflow: hidden;
+  background: linear-gradient(135deg, #020617, #0b1025);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
-#splash::before {
-  content: "";
-  position: absolute;
-  inset: -50%;
-  background: linear-gradient(60deg, var(--neon1), var(--neon2), var(--neon3));
-  animation: spin 14s linear infinite;
-  opacity: 0.35;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 #splashContent {
-  position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   text-align: center;
 }
 
 #splash h1 {
   font-family: 'Bebas Neue';
-  font-size: 4rem;
-  letter-spacing: 4px;
-  text-shadow: 0 0 30px var(--neon1);
+  font-size: 2.5rem;
+  letter-spacing: 3px;
 }
 
 #splash button {
-  margin-top: 30px;
-  padding: 16px 42px;
+  margin-top: 20px;
+  padding: 14px 32px;
   font-family: 'Orbitron';
-  font-size: 1rem;
-  color: black;
   background: var(--neon1);
   border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 0 25px var(--neon1);
+  border-radius: 30px;
+  color: black;
 }
 
 /* HEADER */
 header {
-  position: sticky;
-  top: 0;
-  background: rgba(5,6,10,0.85);
-  backdrop-filter: blur(10px);
-  padding: 18px;
+  padding: 16px;
   text-align: center;
-  z-index: 10;
+  background: #020617;
 }
 
 header h1 {
   font-family: 'Bebas Neue';
-  font-size: 2.2rem;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
+  margin: 0;
   background: linear-gradient(90deg, var(--neon1), var(--neon2));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* FILTERS (mobile scroll) */
 #filters {
-  margin-top: 10px;
+  display: flex;
+  overflow-x: auto;
+  padding: 10px;
+  gap: 10px;
 }
 
 .filter {
-  margin: 0 6px;
-  padding: 6px 14px;
+  white-space: nowrap;
+  padding: 8px 16px;
   border-radius: 20px;
   border: 1px solid #333;
-  cursor: pointer;
   font-size: 0.8rem;
 }
 
 .filter.active {
   background: var(--neon1);
   color: black;
-  border: none;
 }
-
-/* DECOR */
-#decor {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.blob {
-  position: absolute;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  filter: blur(140px);
-  opacity: 0.35;
-}
-
-.blob.one { background: var(--neon1); top: -100px; left: -100px; }
-.blob.two { background: var(--neon2); bottom: -120px; right: -120px; }
-.blob.three { background: var(--neon3); top: 40%; left: 60%; }
 
 /* GALLERY */
 #gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 30px;
-  padding: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 16px;
 }
 
 .art {
-  position: relative;
-  background: rgba(15,18,30,0.9);
-  border-radius: 18px;
-  padding: 14px;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.art:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 0 30px var(--neon1);
+  background: #0b1025;
+  border-radius: 14px;
+  padding: 10px;
 }
 
 .art img {
   width: 100%;
-  max-height: 420px;
   object-fit: contain;
 }
 
-/* DETAILS HINT */
-.hint {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 14px;
+.mobileHint {
+  text-align: center;
   font-family: 'Bebas Neue';
-  letter-spacing: 2px;
-  font-size: 1.1rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-  opacity: 0;
+  margin-top: 6px;
+  letter-spacing: 1px;
+  opacity: 0.8;
 }
 
-.art:hover .hint {
-  opacity: 1;
-}
-
-/* VIEWER */
+/* VIEWER (mobile scrollable) */
 #viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top, #020617, #000);
+  background: #020617;
   z-index: 999;
-  padding: 20px;
-}
-
-#backBtn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: transparent;
-  border: 2px solid var(--neon1);
-  color: var(--neon1);
-  padding: 10px 18px;
-  border-radius: 30px;
-  cursor: pointer;
-}
-
-#viewerContent {
-  max-width: 900px;
-  margin: 60px auto 0;
-  text-align: center;
-  position: relative;
+  overflow-y: auto;
 }
 
 #viewer img {
-  max-width: 100%;
+  width: 100%;
   max-height: 60vh;
   object-fit: contain;
 }
 
-/* FULLSCREEN BUTTON */
-#fullscreenBtn {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  background: rgba(0,0,0,0.6);
-  border: 2px solid var(--neon2);
-  color: var(--neon2);
-  padding: 10px 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
+#viewerContent {
+  padding: 16px;
 }
 
-#info {
-  margin-top: 18px;
+#backBtn {
+  position: sticky;
+  top: 0;
+  padding: 14px;
+  background: #020617;
+  border: none;
+  color: var(--neon1);
+  font-family: 'Orbitron';
 }
 
 #price {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   color: var(--neon3);
 }
 
 a.pay {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 14px 36px;
+  display: block;
+  margin: 16px 0;
+  padding: 16px;
+  text-align: center;
   background: linear-gradient(90deg, var(--neon1), var(--neon2));
   color: black;
+  border-radius: 30px;
   text-decoration: none;
-  border-radius: 50px;
-  font-family: 'Orbitron';
 }
 </style>
 </head>
 
-<body oncontextmenu="return false">
+<body>
 
 <div id="splash">
   <div id="splashContent">
     <h1>Art by Slade Edwards</h1>
-    <button onclick="enterSite()">ENTER GALLERY</button>
+    <button onclick="enterSite()">View Art</button>
   </div>
-</div>
-
-<div id="decor">
-  <div class="blob one"></div>
-  <div class="blob two"></div>
-  <div class="blob three"></div>
 </div>
 
 <header>
@@ -278,17 +183,12 @@ a.pay {
 
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
+  <img id="viewImage">
   <div id="viewerContent">
-    <img id="viewImage">
-    <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
-    <div id="info">
-      <h2 id="viewTitle"></h2>
-      <p id="viewDetails"></p>
-      <p id="price"></p>
-      <a class="pay" href="https://venmo.com/sladenblake8" target="_blank">
-        Pay on Venmo
-      </a>
-    </div>
+    <h2 id="viewTitle"></h2>
+    <p id="viewDetails"></p>
+    <p id="price"></p>
+    <a class="pay" href="https://venmo.com/sladenblake8" target="_blank">Pay on Venmo</a>
   </div>
 </div>
 
@@ -303,82 +203,61 @@ function enterSite() {
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r => r.json())
 .then(issues => {
-  const gallery = document.getElementById("gallery");
   const filters = document.getElementById("filters");
+  const gallery = document.getElementById("gallery");
 
-  allArt = issues
-    .filter(i => !i.pull_request)
-    .map(issue => {
-      const lines = issue.body.split("\n");
-      const get = k => lines.find(l => l.startsWith(k))?.replace(k,"").trim();
-      const image = get("Image:");
-      if (!image) return null;
-
-      return {
-        title: issue.title,
-        price: get("Price:"),
-        details: get("Details:") || "",
-        type: get("Type:") || "Other",
-        image
-      };
-    })
-    .filter(Boolean);
+  allArt = issues.map(issue => {
+    const lines = issue.body.split("\n");
+    const get = k => lines.find(l => l.startsWith(k))?.replace(k,"").trim();
+    const image = get("Image:");
+    if (!image) return null;
+    return {
+      title: issue.title,
+      price: get("Price:"),
+      details: get("Details:") || "",
+      type: get("Type:") || "Other",
+      image
+    };
+  }).filter(Boolean);
 
   const types = ["All", ...new Set(allArt.map(a => a.type))];
-
   types.forEach(t => {
-    const btn = document.createElement("span");
-    btn.className = "filter" + (t === "All" ? " active" : "");
-    btn.innerText = t;
-    btn.onclick = () => applyFilter(t, btn);
-    filters.appendChild(btn);
+    const b = document.createElement("span");
+    b.className = "filter";
+    b.innerText = t;
+    b.onclick = () => render(t);
+    filters.appendChild(b);
   });
 
   render("All");
 });
 
-function applyFilter(type, btn) {
-  document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  render(type);
-}
-
 function render(type) {
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
-  allArt
-    .filter(a => type === "All" || a.type === type)
-    .forEach(a => {
-      const div = document.createElement("div");
-      div.className = "art";
-      div.innerHTML = `
-        <img src="${a.image}">
-        <div class="hint">CLICK TO SEE DETAILS</div>
-      `;
-      div.onclick = () => openViewer(a);
-      gallery.appendChild(div);
-    });
+  allArt.filter(a => type === "All" || a.type === type)
+  .forEach(a => {
+    const d = document.createElement("div");
+    d.className = "art";
+    d.innerHTML = `
+      <img src="${a.image}">
+      <div class="mobileHint">Tap to see details</div>
+    `;
+    d.onclick = () => openViewer(a);
+    gallery.appendChild(d);
+  });
 }
 
 function openViewer(a) {
   document.getElementById("viewImage").src = a.image;
   document.getElementById("viewTitle").innerText = a.title;
   document.getElementById("viewDetails").innerText = a.details;
-  document.getElementById("price").innerText = `$${a.price}`;
+  document.getElementById("price").innerText = "$" + a.price;
   document.getElementById("viewer").style.display = "block";
 }
 
 function closeViewer() {
   document.getElementById("viewer").style.display = "none";
-}
-
-function toggleFullscreen() {
-  const img = document.getElementById("viewImage");
-  if (!document.fullscreenElement) {
-    img.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
 }
 </script>
 
