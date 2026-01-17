@@ -220,14 +220,11 @@ button.submit{
     <form action="https://formspree.io/f/xgoooqgd" method="POST">
       <input type="hidden" name="Artwork" id="artName">
 
+      <label>Full Name</label>
+      <input type="text" name="Name" required placeholder="John Smith">
+
       <label>Your Offer (minimum $20)</label>
-      <input
-        type="number"
-        name="Offer"
-        min="20"
-        placeholder="Enter your offer"
-        required
-      >
+      <input type="number" name="Offer" min="20" required placeholder="Enter your offer">
 
       <label>Phone Number</label>
       <input type="tel" name="Phone" required>
@@ -260,7 +257,8 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
       title:i.title,
       image:img,
       type:get("Type:")||"Other",
-      offer:get("Offer:")
+      offer:get("Offer:"),
+      offeredBy:get("OfferedBy:")
     };
   }).filter(Boolean);
   render("All");
@@ -280,7 +278,9 @@ function render(type){
     d.innerHTML=`
       <img src="${a.image}">
       <div class="detailHint">Click to see more details</div>
-      ${a.offer?`<div class="offerBanner">Highest offer: $${a.offer}</div>`:""}
+      ${(a.offer && a.offeredBy)
+        ? `<div class="offerBanner">${a.offeredBy} offered $${a.offer}</div>`
+        : ""}
     `;
     d.onclick=()=>openViewer(a);
     g.appendChild(d);
