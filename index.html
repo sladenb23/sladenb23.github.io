@@ -25,17 +25,9 @@ header {
 }
 
 h1 {
-  margin: 0 0 15px 0;
+  margin: 0;
   letter-spacing: 3px;
   font-weight: 700;
-}
-
-select {
-  background: #1a1a1a;
-  color: white;
-  border: 1px solid #333;
-  padding: 10px 14px;
-  border-radius: 6px;
 }
 
 #gallery {
@@ -66,43 +58,52 @@ select {
   pointer-events: none;
 }
 
-/* VIEWER */
+/* FULLSCREEN VIEWER */
 #viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.95);
+  background: rgba(0,0,0,0.97);
   z-index: 999;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+}
+
+#viewerContent {
+  max-width: 90%;
+  max-height: 90%;
+  text-align: center;
 }
 
 #viewer img {
-  max-width: 90%;
+  max-width: 100%;
   max-height: 70vh;
   object-fit: contain;
-  pointer-events: none;
-  transition: transform 0.2s ease;
+  display: block;
+  margin: 0 auto;
 }
 
 #info {
-  text-align: center;
-  margin-top: 20px;
-  max-width: 90%;
+  margin-top: 15px;
 }
 
-button {
-  background: #222;
+#price {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+a.pay {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: #1a1a1a;
   color: white;
-  border: none;
-  padding: 12px 16px;
-  margin: 8px;
+  text-decoration: none;
   border-radius: 6px;
-  cursor: pointer;
 }
 
-button:hover {
+a.pay:hover {
   background: #333;
 }
 </style>
@@ -112,44 +113,33 @@ button:hover {
 
 <header>
   <h1>SLADEN ART</h1>
-  <select id="filter">
-    <option value="all">All</option>
-    <option value="Graphite">Graphite</option>
-    <option value="Spray Paint">Spray Paint</option>
-    <option value="Painting">Painting</option>
-  </select>
 </header>
 
 <div id="gallery"></div>
 
-<div id="viewer">
-  <img id="viewImage">
-  <div id="info">
-    <h2 id="viewTitle"></h2>
-    <p id="viewDetails"></p>
-    <p id="viewPrice"></p>
-    <button onclick="zoom(1.25)">Zoom +</button>
-    <button onclick="zoom(0.8)">Zoom −</button>
-    <br>
-    <a id="payLink" target="_blank">
-      <button>Buy with Venmo</button>
-    </a>
-    <br>
-    <button onclick="closeViewer()">Close</button>
+<div id="viewer" onclick="closeViewer()">
+  <div id="viewerContent" onclick="event.stopPropagation()">
+    <img id="viewImage">
+    <div id="info">
+      <h2 id="viewTitle"></h2>
+      <p id="viewDetails"></p>
+      <p id="price"></p>
+      <a class="pay" href="https://venmo.com/sladenblake8" target="_blank">
+        Pay on Venmo
+      </a>
+    </div>
   </div>
 </div>
 
 <script>
 const repo = "sladenb23/sladenb23.github.io";
-let scale = 1;
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r => r.json())
 .then(issues => {
   const gallery = document.getElementById("gallery");
-  const filter = document.getElementById("filter");
 
-  const art = issues
+  issues
     .filter(i => !i.pull_request)
     .map(issue => {
       const lines = issue.body.split("\n");
@@ -161,51 +151,29 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
         title: issue.title,
         price: get("Price:"),
         details: get("Details:") || "",
-        type: get("Type:") || "Other",
         image
       };
     })
-    .filter(Boolean);
-
-  function render(type) {
-    gallery.innerHTML = "";
-    art
-      .filter(a => type === "all" || a.type === type)
-      .forEach(a => {
-        const div = document.createElement("div");
-        div.className = "art";
-        div.innerHTML = `<img src="${a.image}" alt="">`;
-        div.onclick = () => openViewer(a);
-        gallery.appendChild(div);
-      });
-  }
-
-  filter.onchange = e => render(e.target.value);
-  render("all");
+    .filter(Boolean)
+    .forEach(a => {
+      const div = document.createElement("div");
+      div.className = "art";
+      div.innerHTML = `<img src="${a.image}" alt="">`;
+      div.onclick = () => openViewer(a);
+      gallery.appendChild(div);
+    });
 });
 
 function openViewer(a) {
-  scale = 1;
-  const img = document.getElementById("viewImage");
-  img.src = a.image;
-  img.style.transform = "scale(1)";
+  document.getElementById("viewImage").src = a.image;
   document.getElementById("viewTitle").innerText = a.title;
   document.getElementById("viewDetails").innerText = a.details;
-  document.getElementById("viewPrice").innerText = `$${a.price}`;
-
-  document.getElementById("payLink").href =
-    `https://venmo.com/sladenblake8?txn=pay&amount=${a.price}`;
-
+  document.getElementById("price").innerText = `$${a.price}`;
   document.getElementById("viewer").style.display = "flex";
 }
 
 function closeViewer() {
   document.getElementById("viewer").style.display = "none";
-}
-
-function zoom(f) {
-  scale *= f;
-  document.getElementById("viewImage").style.transform = `scale(${scale})`;
 }
 </script>
 
