@@ -45,7 +45,6 @@ body {
   font-family:'Bebas Neue';
   font-size:3rem;
   letter-spacing:4px;
-  text-shadow:0 0 25px rgba(0,255,200,.6);
 }
 #splash button {
   margin-top:25px;
@@ -56,7 +55,6 @@ body {
   border-radius:40px;
   backdrop-filter:blur(14px);
   color:white;
-  cursor:pointer;
 }
 
 /* HEADER */
@@ -74,7 +72,7 @@ header h1 {
   -webkit-text-fill-color:transparent;
 }
 
-/* DROPDOWN FILTER */
+/* DROPDOWN */
 #filterWrap {
   display:flex;
   justify-content:center;
@@ -87,7 +85,6 @@ select {
   padding:10px 16px;
   border-radius:20px;
   font-family:'Orbitron';
-  font-size:.9rem;
 }
 
 /* GALLERY */
@@ -111,7 +108,6 @@ select {
   text-align:center;
   font-family:'Bebas Neue';
   margin-top:6px;
-  opacity:.85;
 }
 
 /* VIEWER */
@@ -123,11 +119,32 @@ select {
   z-index:999;
   overflow-y:auto;
 }
+#imageWrap {
+  position:relative;
+}
 #viewer img {
   width:100%;
   max-height:60vh;
   object-fit:contain;
 }
+
+/* FULLSCREEN BUTTON */
+#fullscreenBtn {
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  background:white;
+  border:none;
+  border-radius:4px;
+  padding:6px 8px;
+  cursor:pointer;
+}
+#fullscreenBtn svg {
+  width:18px;
+  height:18px;
+  fill:black;
+}
+
 #viewerContent {
   padding:16px;
 }
@@ -137,7 +154,6 @@ select {
   border:none;
   color:var(--blue);
   font-family:'Orbitron';
-  cursor:pointer;
 }
 #price {
   font-size:1.3rem;
@@ -164,7 +180,6 @@ button.submit {
   border-radius:30px;
   background:linear-gradient(90deg,var(--blue),var(--green));
   font-family:'Orbitron';
-  cursor:pointer;
 }
 </style>
 </head>
@@ -196,7 +211,17 @@ button.submit {
 <!-- VIEWER -->
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
-  <img id="viewImage">
+
+  <div id="imageWrap">
+    <img id="viewImage">
+    <button id="fullscreenBtn" onclick="goFullscreen()">
+      <!-- YouTube-style icon -->
+      <svg viewBox="0 0 24 24">
+        <path d="M7 14H5v5h5v-2H7v-3zm0-4h3V7h2v5H7V10zm10 9h-3v2h5v-5h-2v3zm-3-9V5h3v3h2V3h-5v5h2z"/>
+      </svg>
+    </button>
+  </div>
+
   <div id="viewerContent">
     <h2 id="viewTitle"></h2>
     <p id="viewDetails"></p>
@@ -241,8 +266,7 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
 });
 
 function applyFilter(){
-  const val=document.getElementById("typeFilter").value;
-  render(val);
+  render(document.getElementById("typeFilter").value);
 }
 
 function render(type){
@@ -252,10 +276,7 @@ function render(type){
   .forEach(a=>{
     const d=document.createElement("div");
     d.className="art";
-    d.innerHTML=`
-      <img src="${a.image}">
-      <div class="mobileHint">Tap to see details</div>
-    `;
+    d.innerHTML=`<img src="${a.image}"><div class="mobileHint">Tap to see details</div>`;
     d.onclick=()=>openViewer(a);
     g.appendChild(d);
   });
@@ -272,6 +293,11 @@ function openViewer(a){
 
 function closeViewer(){
   document.getElementById("viewer").style.display="none";
+}
+
+function goFullscreen(){
+  const img=document.getElementById("viewImage");
+  if(img.requestFullscreen) img.requestFullscreen();
 }
 </script>
 
