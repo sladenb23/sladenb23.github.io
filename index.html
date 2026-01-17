@@ -57,7 +57,7 @@ body {
 }
 
 #splash h1 {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Bebas Neue';
   font-size: 4rem;
   letter-spacing: 4px;
   text-shadow: 0 0 30px var(--neon1);
@@ -76,17 +76,13 @@ body {
   box-shadow: 0 0 25px var(--neon1);
 }
 
-#splash button:hover {
-  transform: scale(1.05);
-}
-
 /* HEADER */
 header {
   position: sticky;
   top: 0;
   background: rgba(5,6,10,0.85);
   backdrop-filter: blur(10px);
-  padding: 20px;
+  padding: 18px;
   text-align: center;
   z-index: 10;
 }
@@ -98,6 +94,25 @@ header h1 {
   background: linear-gradient(90deg, var(--neon1), var(--neon2));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+#filters {
+  margin-top: 10px;
+}
+
+.filter {
+  margin: 0 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #333;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.filter.active {
+  background: var(--neon1);
+  color: black;
+  border: none;
 }
 
 /* DECOR */
@@ -145,10 +160,8 @@ header h1 {
 
 .art img {
   width: 100%;
-  height: auto;
   max-height: 420px;
   object-fit: contain;
-  background: #05060a;
 }
 
 /* DETAILS HINT */
@@ -164,7 +177,6 @@ header h1 {
   font-size: 1.1rem;
   background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
   opacity: 0;
-  transition: opacity 0.25s ease;
 }
 
 .art:hover .hint {
@@ -191,26 +203,13 @@ header h1 {
   padding: 10px 18px;
   border-radius: 30px;
   cursor: pointer;
-  font-family: 'Orbitron';
-}
-
-#fullscreenBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: transparent;
-  border: 2px solid var(--neon2);
-  color: var(--neon2);
-  padding: 10px 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
 }
 
 #viewerContent {
   max-width: 900px;
-  margin: 80px auto 0;
+  margin: 60px auto 0;
   text-align: center;
+  position: relative;
 }
 
 #viewer img {
@@ -219,16 +218,22 @@ header h1 {
   object-fit: contain;
 }
 
-#info {
-  margin-top: 25px;
-  padding: 24px;
-  background: rgba(15,18,30,0.9);
-  border-radius: 16px;
+/* FULLSCREEN BUTTON */
+#fullscreenBtn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.6);
+  border: 2px solid var(--neon2);
+  color: var(--neon2);
+  padding: 10px 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
 }
 
-#info h2 {
-  font-family: 'Bebas Neue';
-  letter-spacing: 2px;
+#info {
+  margin-top: 18px;
 }
 
 #price {
@@ -238,7 +243,7 @@ header h1 {
 
 a.pay {
   display: inline-block;
-  margin-top: 20px;
+  margin-top: 12px;
   padding: 14px 36px;
   background: linear-gradient(90deg, var(--neon1), var(--neon2));
   color: black;
@@ -266,15 +271,16 @@ a.pay {
 
 <header>
   <h1>Art by Slade Edwards</h1>
+  <div id="filters"></div>
 </header>
 
 <div id="gallery"></div>
 
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
-  <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
   <div id="viewerContent">
     <img id="viewImage">
+    <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
     <div id="info">
       <h2 id="viewTitle"></h2>
       <p id="viewDetails"></p>
@@ -288,6 +294,7 @@ a.pay {
 
 <script>
 const repo = "sladenb23/sladenb23.github.io";
+let allArt = [];
 
 function enterSite() {
   document.getElementById("splash").style.display = "none";
@@ -297,8 +304,9 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r => r.json())
 .then(issues => {
   const gallery = document.getElementById("gallery");
+  const filters = document.getElementById("filters");
 
-  issues
+  allArt = issues
     .filter(i => !i.pull_request)
     .map(issue => {
       const lines = issue.body.split("\n");
@@ -310,10 +318,36 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
         title: issue.title,
         price: get("Price:"),
         details: get("Details:") || "",
+        type: get("Type:") || "Other",
         image
       };
     })
-    .filter(Boolean)
+    .filter(Boolean);
+
+  const types = ["All", ...new Set(allArt.map(a => a.type))];
+
+  types.forEach(t => {
+    const btn = document.createElement("span");
+    btn.className = "filter" + (t === "All" ? " active" : "");
+    btn.innerText = t;
+    btn.onclick = () => applyFilter(t, btn);
+    filters.appendChild(btn);
+  });
+
+  render("All");
+});
+
+function applyFilter(type, btn) {
+  document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  render(type);
+}
+
+function render(type) {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+  allArt
+    .filter(a => type === "All" || a.type === type)
     .forEach(a => {
       const div = document.createElement("div");
       div.className = "art";
@@ -324,7 +358,7 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
       div.onclick = () => openViewer(a);
       gallery.appendChild(div);
     });
-});
+}
 
 function openViewer(a) {
   document.getElementById("viewImage").src = a.image;
@@ -339,9 +373,9 @@ function closeViewer() {
 }
 
 function toggleFullscreen() {
-  const elem = document.getElementById("viewImage");
+  const img = document.getElementById("viewImage");
   if (!document.fullscreenElement) {
-    elem.requestFullscreen();
+    img.requestFullscreen();
   } else {
     document.exitFullscreen();
   }
