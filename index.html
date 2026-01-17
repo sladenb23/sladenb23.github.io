@@ -105,6 +105,13 @@ select {
   max-height:280px;
   object-fit:contain;
 }
+.detailHint {
+  text-align:center;
+  font-size:0.75rem;
+  opacity:0.65;
+  margin-top:6px;
+  font-family:'Bebas Neue';
+}
 
 /* VIEWER */
 #viewer {
@@ -121,7 +128,6 @@ select {
   object-fit:contain;
   cursor:pointer;
 }
-
 #viewerContent {
   padding:16px;
 }
@@ -133,14 +139,12 @@ select {
   font-family:'Orbitron';
   cursor:pointer;
 }
-
 .fullscreenHint {
   font-size:0.75rem;
   opacity:0.6;
   margin-top:6px;
   text-align:center;
 }
-
 #price {
   font-size:1.3rem;
   color:var(--green);
@@ -256,7 +260,10 @@ function render(type){
   .forEach(a=>{
     const d=document.createElement("div");
     d.className="art";
-    d.innerHTML=`<img src="${a.image}">`;
+    d.innerHTML=`
+      <img src="${a.image}">
+      <div class="detailHint">Click to see more details</div>
+    `;
     d.onclick=()=>openViewer(a);
     g.appendChild(d);
   });
