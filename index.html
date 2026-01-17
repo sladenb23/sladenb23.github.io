@@ -5,7 +5,6 @@
 <title>Art by Slade Edwards</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- EXTREME FONTS -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -24,7 +23,7 @@ body {
   user-select: none;
 }
 
-/* ===== SPLASH ===== */
+/* SPLASH */
 #splash {
   position: fixed;
   inset: 0;
@@ -81,7 +80,7 @@ body {
   transform: scale(1.05);
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header {
   position: sticky;
   top: 0;
@@ -101,7 +100,7 @@ header h1 {
   -webkit-text-fill-color: transparent;
 }
 
-/* ===== DECOR BACKGROUND ===== */
+/* DECOR */
 #decor {
   position: fixed;
   inset: 0;
@@ -122,7 +121,7 @@ header h1 {
 .blob.two { background: var(--neon2); bottom: -120px; right: -120px; }
 .blob.three { background: var(--neon3); top: 40%; left: 60%; }
 
-/* ===== GALLERY ===== */
+/* GALLERY */
 #gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -131,12 +130,12 @@ header h1 {
 }
 
 .art {
+  position: relative;
   background: rgba(15,18,30,0.9);
   border-radius: 18px;
   padding: 14px;
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 0 0 transparent;
 }
 
 .art:hover {
@@ -152,7 +151,27 @@ header h1 {
   background: #05060a;
 }
 
-/* ===== VIEWER ===== */
+/* DETAILS HINT */
+.hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 14px;
+  font-family: 'Bebas Neue';
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.art:hover .hint {
+  opacity: 1;
+}
+
+/* VIEWER */
 #viewer {
   display: none;
   position: fixed;
@@ -175,6 +194,19 @@ header h1 {
   font-family: 'Orbitron';
 }
 
+#fullscreenBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: 2px solid var(--neon2);
+  color: var(--neon2);
+  padding: 10px 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
 #viewerContent {
   max-width: 900px;
   margin: 80px auto 0;
@@ -192,7 +224,6 @@ header h1 {
   padding: 24px;
   background: rgba(15,18,30,0.9);
   border-radius: 16px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.7);
 }
 
 #info h2 {
@@ -241,6 +272,7 @@ a.pay {
 
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
+  <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
   <div id="viewerContent">
     <img id="viewImage">
     <div id="info">
@@ -285,7 +317,10 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
     .forEach(a => {
       const div = document.createElement("div");
       div.className = "art";
-      div.innerHTML = `<img src="${a.image}">`;
+      div.innerHTML = `
+        <img src="${a.image}">
+        <div class="hint">CLICK TO SEE DETAILS</div>
+      `;
       div.onclick = () => openViewer(a);
       gallery.appendChild(div);
     });
@@ -301,6 +336,15 @@ function openViewer(a) {
 
 function closeViewer() {
   document.getElementById("viewer").style.display = "none";
+}
+
+function toggleFullscreen() {
+  const elem = document.getElementById("viewImage");
+  if (!document.fullscreenElement) {
+    elem.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
 }
 </script>
 
