@@ -2,51 +2,99 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SLADEN ART</title>
+<title>Art by Slade Edwards</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+:root {
+  --accent1: #ff6a00;
+  --accent2: #ff2d55;
+  --accent3: #6a5cff;
+}
+
 body {
   margin: 0;
-  background: #0f0f0f;
-  color: #ffffff;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f0f0f;
+  color: white;
   user-select: none;
 }
 
+/* SPLASH SCREEN */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  text-align: center;
+}
+
+#splashContent {
+  max-width: 90%;
+}
+
+#splash h1 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+#splash button {
+  background: rgba(0,0,0,0.25);
+  border: 2px solid white;
+  color: white;
+  padding: 14px 26px;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+#splash button:hover {
+  background: rgba(0,0,0,0.4);
+}
+
+/* HEADER */
 header {
   position: sticky;
   top: 0;
-  background: rgba(15,15,15,0.95);
-  padding: 20px;
+  background: linear-gradient(90deg, #151515, #1a1a1a);
+  padding: 18px;
   text-align: center;
   border-bottom: 1px solid #222;
   z-index: 10;
 }
 
-h1 {
+header h1 {
   margin: 0;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   font-weight: 700;
+  background: linear-gradient(90deg, var(--accent1), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
+/* GALLERY */
 #gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  gap: 22px;
   padding: 25px;
 }
 
 .art {
   background: #151515;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .art:hover {
-  transform: scale(1.02);
+  transform: scale(1.03);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
 }
 
 .art img {
@@ -80,8 +128,6 @@ h1 {
   max-width: 100%;
   max-height: 70vh;
   object-fit: contain;
-  display: block;
-  margin: 0 auto;
 }
 
 #info {
@@ -89,30 +135,38 @@ h1 {
 }
 
 #price {
-  margin-top: 6px;
   font-weight: 600;
+  color: var(--accent1);
 }
 
 a.pay {
   display: inline-block;
   margin-top: 14px;
-  padding: 12px 18px;
-  background: #1a1a1a;
+  padding: 12px 22px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent3));
   color: white;
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 30px;
 }
 
 a.pay:hover {
-  background: #333;
+  opacity: 0.9;
 }
 </style>
 </head>
 
 <body oncontextmenu="return false">
 
+<!-- SPLASH -->
+<div id="splash">
+  <div id="splashContent">
+    <h1>Art by Slade Edwards</h1>
+    <button onclick="enterSite()">View Art</button>
+  </div>
+</div>
+
 <header>
-  <h1>SLADEN ART</h1>
+  <h1>Art by Slade Edwards</h1>
 </header>
 
 <div id="gallery"></div>
@@ -133,6 +187,10 @@ a.pay:hover {
 
 <script>
 const repo = "sladenb23/sladenb23.github.io";
+
+function enterSite() {
+  document.getElementById("splash").style.display = "none";
+}
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r => r.json())
