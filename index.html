@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Art</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    img { max-width: 250px; display: block; }
+    .art { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
 
+<h1>🎨 My Art</h1>
+<div id="gallery"></div>
+
+<script>
+const repo = "YOUR_USERNAME/YOUR_USERNAME.github.io";
+
+fetch(`https://api.github.com/repos/${repo}/issues`)
+  .then(r => r.json())
+  .then(issues => {
+    const g = document.getElementById("gallery");
+
+    issues.forEach(issue => {
+      if (issue.pull_request) return;
+
+      const lines = issue.body.split("\n");
+      const price = lines.find(l => l.startsWith("Price:"))?.replace("Price:", "").trim();
+      const image = lines.find(l => l.startsWith("Image:"))?.replace("Image:", "").trim();
+
+      if (!image) return;
+
+      g.innerHTML += `
+        <div class="art">
+          <img src="${image}">
+          <h3>${issue.title}</h3>
+          <p>$${price}</p>
+        </div>
+      `;
+    });
+  });
+</script>
+
+</body>
+</html>
