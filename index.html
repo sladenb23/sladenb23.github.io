@@ -98,16 +98,12 @@ select {
   background:#0b1025;
   border-radius:14px;
   padding:10px;
+  cursor:pointer;
 }
 .art img {
   width:100%;
   max-height:280px;
   object-fit:contain;
-}
-.mobileHint {
-  text-align:center;
-  font-family:'Bebas Neue';
-  margin-top:6px;
 }
 
 /* VIEWER */
@@ -119,30 +115,11 @@ select {
   z-index:999;
   overflow-y:auto;
 }
-#imageWrap {
-  position:relative;
-}
 #viewer img {
   width:100%;
   max-height:60vh;
   object-fit:contain;
-}
-
-/* FULLSCREEN BUTTON */
-#fullscreenBtn {
-  position:absolute;
-  bottom:10px;
-  right:10px;
-  background:white;
-  border:none;
-  border-radius:4px;
-  padding:6px 8px;
   cursor:pointer;
-}
-#fullscreenBtn svg {
-  width:18px;
-  height:18px;
-  fill:black;
 }
 
 #viewerContent {
@@ -154,7 +131,16 @@ select {
   border:none;
   color:var(--blue);
   font-family:'Orbitron';
+  cursor:pointer;
 }
+
+.fullscreenHint {
+  font-size:0.75rem;
+  opacity:0.6;
+  margin-top:6px;
+  text-align:center;
+}
+
 #price {
   font-size:1.3rem;
   color:var(--green);
@@ -180,6 +166,7 @@ button.submit {
   border-radius:30px;
   background:linear-gradient(90deg,var(--blue),var(--green));
   font-family:'Orbitron';
+  cursor:pointer;
 }
 </style>
 </head>
@@ -212,15 +199,8 @@ button.submit {
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
 
-  <div id="imageWrap">
-    <img id="viewImage">
-    <button id="fullscreenBtn" onclick="goFullscreen()">
-      <!-- YouTube-style icon -->
-      <svg viewBox="0 0 24 24">
-        <path d="M7 14H5v5h5v-2H7v-3zm0-4h3V7h2v5H7V10zm10 9h-3v2h5v-5h-2v3zm-3-9V5h3v3h2V3h-5v5h2z"/>
-      </svg>
-    </button>
-  </div>
+  <img id="viewImage" onclick="goFullscreen()">
+  <div class="fullscreenHint">Click image to view in full screen</div>
 
   <div id="viewerContent">
     <h2 id="viewTitle"></h2>
@@ -276,7 +256,7 @@ function render(type){
   .forEach(a=>{
     const d=document.createElement("div");
     d.className="art";
-    d.innerHTML=`<img src="${a.image}"><div class="mobileHint">Tap to see details</div>`;
+    d.innerHTML=`<img src="${a.image}">`;
     d.onclick=()=>openViewer(a);
     g.appendChild(d);
   });
