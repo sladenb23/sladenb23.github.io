@@ -22,7 +22,42 @@ body{
   font-family:'Orbitron',system-ui,sans-serif;
 }
 
-/* header */
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#003973,#00c6ff,#00ff9d,#003973);
+  background-size:300% 300%;
+  animation:flow 12s ease infinite;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+@keyframes flow{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+#splashContent{text-align:center}
+#splash h1{
+  font-family:'Bebas Neue';
+  font-size:3rem;
+  letter-spacing:4px;
+}
+#splash button{
+  margin-top:25px;
+  padding:16px 42px;
+  font-family:'Orbitron';
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:40px;
+  backdrop-filter:blur(14px);
+  color:white;
+  cursor:pointer;
+}
+
+/* HEADER */
 header{
   background:var(--dark);
   padding:16px;
@@ -36,7 +71,22 @@ header h1{
   -webkit-text-fill-color:transparent;
 }
 
-/* gallery */
+/* FILTER */
+#filterWrap{
+  display:flex;
+  justify-content:center;
+  margin-top:10px;
+}
+select{
+  background:#0b1025;
+  color:white;
+  border:1px solid #333;
+  padding:10px 16px;
+  border-radius:20px;
+  font-family:'Orbitron';
+}
+
+/* GALLERY */
 #gallery{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -55,23 +105,29 @@ header h1{
   max-height:280px;
   object-fit:contain;
 }
+.detailHint{
+  text-align:center;
+  font-size:.75rem;
+  opacity:.65;
+  margin-top:6px;
+  font-family:'Bebas Neue';
+}
 
-/* offer banner */
+/* OFFER BANNER */
 .offerBanner{
   position:absolute;
   bottom:0;
   left:0;
   right:0;
   background:var(--red);
-  color:white;
   text-align:center;
-  font-size:.85rem;
   padding:6px;
-  border-radius:0 0 14px 14px;
+  font-size:.85rem;
   font-family:'Bebas Neue';
+  border-radius:0 0 14px 14px;
 }
 
-/* viewer */
+/* VIEWER */
 #viewer{
   display:none;
   position:fixed;
@@ -87,48 +143,76 @@ header h1{
   cursor:pointer;
 }
 #viewerContent{
-  padding:16px;
+  padding:18px;
 }
 #backBtn{
+  padding:14px;
   background:none;
   border:none;
   color:var(--blue);
   font-family:'Orbitron';
-  font-size:1rem;
+  cursor:pointer;
+}
+.fullscreenHint{
+  text-align:center;
+  font-size:.75rem;
+  opacity:.6;
+  margin-top:6px;
 }
 
-/* form */
-input[type=range]{
+/* FORM */
+form{margin-top:18px}
+label{display:block;margin-top:12px}
+input, textarea, select{
   width:100%;
-}
-.rangeValue{
-  text-align:center;
-  font-size:1.4rem;
-  color:var(--green);
-  margin:10px 0;
+  padding:12px;
+  margin-top:6px;
+  border-radius:10px;
+  border:none;
+  font-family:'Orbitron';
 }
 button.submit{
+  margin-top:18px;
   width:100%;
   padding:16px;
   border:none;
   border-radius:30px;
   background:linear-gradient(90deg,var(--blue),var(--green));
   font-family:'Orbitron';
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
+<!-- SPLASH -->
+<div id="splash">
+  <div id="splashContent">
+    <h1>Art by Slade Edwards</h1>
+    <button onclick="enterSite()">View Art</button>
+  </div>
+</div>
+
 <header>
   <h1>Art by Slade Edwards</h1>
+  <div id="filterWrap">
+    <select id="typeFilter" onchange="applyFilter()">
+      <option value="All">All</option>
+      <option value="Graphite">Graphite</option>
+      <option value="Paintings">Paintings</option>
+      <option value="Spray Paintings">Spray Paintings</option>
+    </select>
+  </div>
 </header>
 
 <div id="gallery"></div>
 
+<!-- VIEWER -->
 <div id="viewer">
   <button id="backBtn" onclick="closeViewer()">← Back</button>
   <img id="viewImage" onclick="goFullscreen()">
+  <div class="fullscreenHint">Click image to view in full screen</div>
 
   <div id="viewerContent">
     <h2 id="viewTitle"></h2>
@@ -136,13 +220,17 @@ button.submit{
     <form action="https://formspree.io/f/xgoooqgd" method="POST">
       <input type="hidden" name="Artwork" id="artName">
 
-      <label>Offer Amount ($)</label>
-      <input type="range" min="20" max="500" value="100" id="offerRange"
-             oninput="updateOffer()" name="Offer">
-      <div class="rangeValue">$<span id="offerValue">100</span></div>
+      <label>Your Offer</label>
+      <select name="Offer" required>
+        <option value="">Select price</option>
+        ${Array.from({length:49},(_,i)=>`<option value="${20+i*10}">$${20+i*10}</option>`).join("")}
+      </select>
 
       <label>Phone Number</label>
       <input type="tel" name="Phone" required>
+
+      <label>Message (optional)</label>
+      <textarea name="Message"></textarea>
 
       <button class="submit" type="submit">Send Offer</button>
     </form>
@@ -152,6 +240,10 @@ button.submit{
 <script>
 const repo="sladenb23/sladenb23.github.io";
 let allArt=[];
+
+function enterSite(){
+  document.getElementById("splash").style.display="none";
+}
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r=>r.json())
@@ -164,22 +256,29 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
     return{
       title:i.title,
       image:img,
+      type:get("Type:")||"Other",
       offer:get("Offer:")
     };
   }).filter(Boolean);
-  render();
+  render("All");
 });
 
-function render(){
+function applyFilter(){
+  render(document.getElementById("typeFilter").value);
+}
+
+function render(type){
   const g=document.getElementById("gallery");
   g.innerHTML="";
-  allArt.forEach(a=>{
+  allArt.filter(a=>type==="All"||a.type===type)
+  .forEach(a=>{
     const d=document.createElement("div");
     d.className="art";
-    d.innerHTML=`<img src="${a.image}">`;
-    if(a.offer){
-      d.innerHTML+=`<div class="offerBanner">Highest offer: $${a.offer}</div>`;
-    }
+    d.innerHTML=`
+      <img src="${a.image}">
+      <div class="detailHint">Click to see more details</div>
+      ${a.offer?`<div class="offerBanner">Highest offer: $${a.offer}</div>`:""}
+    `;
     d.onclick=()=>openViewer(a);
     g.appendChild(d);
   });
@@ -194,11 +293,6 @@ function openViewer(a){
 
 function closeViewer(){
   document.getElementById("viewer").style.display="none";
-}
-
-function updateOffer(){
-  document.getElementById("offerValue").innerText =
-    document.getElementById("offerRange").value;
 }
 
 function goFullscreen(){
