@@ -68,30 +68,26 @@ header {
 header h1 {
   font-family:'Bebas Neue';
   letter-spacing:2px;
-  margin:0;
+  margin-bottom:12px;
   background:linear-gradient(90deg,var(--blue),var(--green));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 
-/* FILTERS */
-#filters {
+/* DROPDOWN FILTER */
+#filterWrap {
   display:flex;
   justify-content:center;
-  gap:10px;
-  padding:10px;
-  overflow-x:auto;
+  margin-bottom:8px;
 }
-.filter {
-  padding:8px 16px;
-  border-radius:20px;
+select {
+  background:#0b1025;
+  color:white;
   border:1px solid #333;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.filter.active {
-  background:linear-gradient(90deg,var(--blue),var(--green));
-  color:black;
+  padding:10px 16px;
+  border-radius:20px;
+  font-family:'Orbitron';
+  font-size:.9rem;
 }
 
 /* GALLERY */
@@ -185,7 +181,14 @@ button.submit {
 
 <header>
   <h1>Art by Slade Edwards</h1>
-  <div id="filters"></div>
+  <div id="filterWrap">
+    <select id="typeFilter" onchange="applyFilter()">
+      <option value="All">All</option>
+      <option value="Graphite">Graphite</option>
+      <option value="Spray Paintings">Spray Paintings</option>
+      <option value="Paintings">Paintings</option>
+    </select>
+  </div>
 </header>
 
 <div id="gallery"></div>
@@ -199,13 +202,12 @@ button.submit {
     <p id="viewDetails"></p>
     <p id="price"></p>
 
-    <!-- BUY FORM -->
     <form action="https://formspree.io/f/xgoooqgd" method="POST">
       <input type="hidden" name="Artwork" id="artName">
       <label>Phone Number</label>
-      <input type="tel" name="Phone" required placeholder="123-456-7890">
+      <input type="tel" name="Phone" required>
       <label>Message (optional)</label>
-      <textarea name="Message" placeholder="Questions or notes"></textarea>
+      <textarea name="Message"></textarea>
       <button class="submit" type="submit">Request to Buy</button>
     </form>
   </div>
@@ -222,8 +224,6 @@ function enterSite(){
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r=>r.json())
 .then(issues=>{
-  const filters=document.getElementById("filters");
-
   allArt=issues.map(i=>{
     const lines=i.body.split("\n");
     const get=k=>lines.find(l=>l.startsWith(k))?.replace(k,"").trim();
@@ -237,18 +237,13 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
       image:img
     };
   }).filter(Boolean);
-
-  const types=["All",...new Set(allArt.map(a=>a.type))];
-  types.forEach(t=>{
-    const b=document.createElement("span");
-    b.className="filter"+(t==="All"?" active":"");
-    b.innerText=t;
-    b.onclick=()=>render(t);
-    filters.appendChild(b);
-  });
-
   render("All");
 });
+
+function applyFilter(){
+  const val=document.getElementById("typeFilter").value;
+  render(val);
+}
 
 function render(type){
   const g=document.getElementById("gallery");
