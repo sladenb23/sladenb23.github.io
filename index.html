@@ -9,9 +9,9 @@
 
 <style>
 :root {
-  --neon1: #00eaff;
-  --neon2: #6a00ff;
-  --neon3: #00ff85;
+  --blue: #00c6ff;
+  --green: #00ff9d;
+  --dark: #020617;
 }
 
 body {
@@ -19,57 +19,86 @@ body {
   background: #05060a;
   color: white;
   font-family: 'Orbitron', system-ui, sans-serif;
-  user-select: none;
 }
 
-/* SPLASH (mobile safe) */
+/* ===== GREETING / SPLASH ===== */
 #splash {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #020617, #0b1025);
+  background: linear-gradient(
+    135deg,
+    #003973,
+    #00c6ff,
+    #00ff9d,
+    #003973
+  );
+  background-size: 300% 300%;
+  animation: gradientFlow 12s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 #splashContent {
   text-align: center;
+  padding: 30px;
 }
 
 #splash h1 {
   font-family: 'Bebas Neue';
-  font-size: 2.5rem;
-  letter-spacing: 3px;
+  font-size: 3rem;
+  letter-spacing: 4px;
+  margin-bottom: 28px;
+  text-shadow: 0 0 25px rgba(0,255,200,0.6);
 }
 
+/* LIQUID GLASS BUTTON */
 #splash button {
-  margin-top: 20px;
-  padding: 14px 32px;
+  padding: 16px 42px;
   font-family: 'Orbitron';
-  background: var(--neon1);
-  border: none;
-  border-radius: 30px;
-  color: black;
+  font-size: 1rem;
+  color: white;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 40px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 20px rgba(0,255,200,0.4),
+    inset 0 0 20px rgba(255,255,255,0.25);
+  cursor: pointer;
 }
 
-/* HEADER */
+#splash button:hover {
+  box-shadow:
+    0 0 35px rgba(0,255,200,0.8),
+    inset 0 0 25px rgba(255,255,255,0.35);
+}
+
+/* ===== HEADER ===== */
 header {
   padding: 16px;
   text-align: center;
-  background: #020617;
+  background: var(--dark);
 }
 
 header h1 {
   font-family: 'Bebas Neue';
   letter-spacing: 2px;
   margin: 0;
-  background: linear-gradient(90deg, var(--neon1), var(--neon2));
+  background: linear-gradient(90deg, var(--blue), var(--green));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* FILTERS (mobile scroll) */
+/* FILTERS */
 #filters {
   display: flex;
   overflow-x: auto;
@@ -86,8 +115,9 @@ header h1 {
 }
 
 .filter.active {
-  background: var(--neon1);
+  background: linear-gradient(90deg, var(--blue), var(--green));
   color: black;
+  border: none;
 }
 
 /* GALLERY */
@@ -114,15 +144,15 @@ header h1 {
   font-family: 'Bebas Neue';
   margin-top: 6px;
   letter-spacing: 1px;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
-/* VIEWER (mobile scrollable) */
+/* VIEWER */
 #viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: #020617;
+  background: var(--dark);
   z-index: 999;
   overflow-y: auto;
 }
@@ -141,15 +171,15 @@ header h1 {
   position: sticky;
   top: 0;
   padding: 14px;
-  background: #020617;
+  background: var(--dark);
   border: none;
-  color: var(--neon1);
+  color: var(--blue);
   font-family: 'Orbitron';
 }
 
 #price {
   font-size: 1.3rem;
-  color: var(--neon3);
+  color: var(--green);
 }
 
 a.pay {
@@ -157,7 +187,7 @@ a.pay {
   margin: 16px 0;
   padding: 16px;
   text-align: center;
-  background: linear-gradient(90deg, var(--neon1), var(--neon2));
+  background: linear-gradient(90deg, var(--blue), var(--green));
   color: black;
   border-radius: 30px;
   text-decoration: none;
@@ -167,6 +197,7 @@ a.pay {
 
 <body>
 
+<!-- GREETING -->
 <div id="splash">
   <div id="splashContent">
     <h1>Art by Slade Edwards</h1>
@@ -188,7 +219,9 @@ a.pay {
     <h2 id="viewTitle"></h2>
     <p id="viewDetails"></p>
     <p id="price"></p>
-    <a class="pay" href="https://venmo.com/sladenblake8" target="_blank">Pay on Venmo</a>
+    <a class="pay" href="https://venmo.com/sladenblake8" target="_blank">
+      Pay on Venmo
+    </a>
   </div>
 </div>
 
@@ -204,7 +237,6 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r => r.json())
 .then(issues => {
   const filters = document.getElementById("filters");
-  const gallery = document.getElementById("gallery");
 
   allArt = issues.map(issue => {
     const lines = issue.body.split("\n");
@@ -225,7 +257,7 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
     const b = document.createElement("span");
     b.className = "filter";
     b.innerText = t;
-    b.onclick = () => render(t);
+    b.onclick = () => render(t, b);
     filters.appendChild(b);
   });
 
