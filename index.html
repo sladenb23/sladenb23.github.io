@@ -25,15 +25,15 @@ body{
   margin:0;
   min-height:100vh;
   background:
-    radial-gradient(circle at top left, rgba(10,132,255,.22), transparent 45%),
-    radial-gradient(circle at bottom right, rgba(48,209,88,.22), transparent 45%),
+    radial-gradient(circle at 20% 30%, rgba(10,132,255,.18), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(48,209,88,.18), transparent 40%),
     linear-gradient(180deg,#020617,#050b1a);
   color:white;
   font-family:'Inter',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 
-/* SPLASH */
+/* SPLASH (UNCHANGED ON PURPOSE) */
 #splash{
   position:fixed;
   inset:0;
@@ -82,9 +82,11 @@ header{
   position:sticky;
   top:0;
   z-index:20;
-  background:rgba(2,6,23,.65);
+  background:
+    linear-gradient(180deg, rgba(10,132,255,.12), transparent),
+    rgba(2,6,23,.65);
   backdrop-filter:blur(26px) saturate(140%);
-  border-bottom:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.12);
   padding:20px 18px 18px;
   text-align:center;
 }
@@ -106,7 +108,9 @@ header h1{
 }
 
 select{
-  background:var(--glassSoft);
+  background:
+    linear-gradient(135deg, rgba(10,132,255,.25), rgba(48,209,88,.25)),
+    var(--glassSoft);
   backdrop-filter:blur(20px);
   border:1px solid var(--border);
   color:white;
@@ -120,19 +124,17 @@ select{
 #gallery{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-  gap:30px;
-  padding:36px;
+  gap:34px;
+  padding:40px;
 }
 
 /* ART CARD */
 .art{
   position:relative;
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.18),
-    rgba(255,255,255,.08)
-  );
-  backdrop-filter:blur(28px) saturate(150%);
+  background:
+    linear-gradient(180deg, rgba(10,132,255,.18), rgba(48,209,88,.12)),
+    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+  backdrop-filter:blur(30px) saturate(160%);
   border:1px solid rgba(255,255,255,.28);
   border-radius:28px;
   padding:20px;
@@ -146,24 +148,23 @@ select{
   overflow:hidden;
 }
 
-/* glow accent */
+/* blue/green glow */
 .art::before{
   content:"";
   position:absolute;
-  inset:-40%;
+  inset:-50%;
   background:
-    radial-gradient(circle at top left,
-      rgba(10,132,255,.35),
-      transparent 55%);
+    radial-gradient(circle at 30% 20%, rgba(10,132,255,.45), transparent 55%),
+    radial-gradient(circle at 70% 80%, rgba(48,209,88,.45), transparent 55%);
   opacity:.35;
   pointer-events:none;
 }
 
 /* hover lift */
 .art:hover{
-  transform:translateY(-8px) scale(1.02);
+  transform:translateY(-10px) scale(1.03);
   box-shadow:
-    0 40px 90px rgba(0,0,0,.45),
+    0 45px 100px rgba(0,0,0,.5),
     inset 0 1px 0 rgba(255,255,255,.35);
 }
 
@@ -175,10 +176,11 @@ select{
   border-radius:18px;
   background:
     radial-gradient(circle at center,
-      rgba(255,255,255,.08),
-      rgba(0,0,0,.25));
+      rgba(10,132,255,.15),
+      rgba(48,209,88,.08),
+      rgba(0,0,0,.35));
   box-shadow:
-    0 12px 30px rgba(0,0,0,.35);
+    0 14px 34px rgba(0,0,0,.45);
 }
 
 /* DETAIL HINT */
@@ -188,6 +190,7 @@ select{
   font-size:.8rem;
   opacity:.7;
   letter-spacing:.08em;
+  color:#cfeaff;
 }
 
 /* OFFER BANNER */
@@ -197,11 +200,11 @@ select{
   left:0;
   right:0;
   padding:12px;
-  background:linear-gradient(90deg,var(--red),#ff9f0a);
+  background:linear-gradient(90deg,var(--blue),var(--green));
   font-weight:600;
   text-align:center;
   border-radius:0 0 28px 28px;
-  box-shadow:0 -10px 30px rgba(0,0,0,.35);
+  box-shadow:0 -10px 30px rgba(0,0,0,.45);
 }
 
 /* VIEWER */
@@ -209,7 +212,10 @@ select{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(2,6,23,.92);
+  background:
+    radial-gradient(circle at top, rgba(10,132,255,.25), transparent 45%),
+    radial-gradient(circle at bottom, rgba(48,209,88,.25), transparent 45%),
+    rgba(2,6,23,.92);
   backdrop-filter:blur(32px);
   z-index:999;
   overflow-y:auto;
@@ -224,8 +230,10 @@ select{
 
 #viewerContent{
   margin:24px;
-  background:var(--glass);
-  backdrop-filter:blur(30px) saturate(140%);
+  background:
+    linear-gradient(180deg, rgba(10,132,255,.18), rgba(48,209,88,.12)),
+    var(--glass);
+  backdrop-filter:blur(30px) saturate(150%);
   border:1px solid var(--border);
   border-radius:30px;
   padding:26px;
@@ -257,7 +265,7 @@ label{
   display:block;
   margin-top:16px;
   font-size:.85rem;
-  opacity:.8;
+  opacity:.85;
 }
 
 input, textarea{
@@ -266,7 +274,9 @@ input, textarea{
   margin-top:6px;
   border-radius:16px;
   border:1px solid var(--border);
-  background:rgba(255,255,255,.12);
+  background:
+    linear-gradient(135deg, rgba(10,132,255,.18), rgba(48,209,88,.12)),
+    rgba(255,255,255,.12);
   color:white;
   font-family:'Inter';
 }
