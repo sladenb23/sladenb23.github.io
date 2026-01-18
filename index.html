@@ -18,10 +18,8 @@
   --red:#ff453a;
 }
 
-/* RESET */
 *{box-sizing:border-box}
 
-/* IMAGE PROTECTION */
 img{
   -webkit-user-drag:none;
   user-select:none;
@@ -29,7 +27,6 @@ img{
   -webkit-touch-callout:none;
 }
 
-/* BODY */
 body{
   margin:0;
   min-height:100vh;
@@ -41,43 +38,36 @@ body{
   font-family:'Inter',system-ui,sans-serif;
 }
 
-/* SOLD NOTICE */
-#soldNotice{
+/* SIDEBAR */
+#sidebar{
   position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:2000;
-  display:none;
-  background:
-    linear-gradient(90deg, rgba(10,132,255,.9), rgba(48,209,88,.9));
-  color:white;
-  padding:14px 18px;
-  backdrop-filter:blur(20px);
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
-}
-
-#soldNoticeContent{
-  max-width:900px;
-  margin:auto;
+  left:0; top:0; bottom:0;
+  width:72px;
+  background:rgba(2,6,23,.65);
+  backdrop-filter:blur(24px);
+  border-right:1px solid rgba(255,255,255,.08);
   display:flex;
-  justify-content:space-between;
+  flex-direction:column;
   align-items:center;
-  gap:16px;
+  padding:18px 0;
+  z-index:1500;
 }
-
-#soldNotice button{
-  background:rgba(255,255,255,.2);
-  border:none;
-  border-radius:999px;
-  padding:6px 14px;
-  color:white;
+.sideBtn{
+  margin:10px 0;
+  padding:10px;
+  border-radius:14px;
   cursor:pointer;
-  font-family:'Inter';
-  font-size:.85rem;
+  font-size:.7rem;
+  opacity:.65;
+}
+.sideBtn.active{
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  opacity:1;
 }
 
-/* SPLASH (UNCHANGED) */
+main{margin-left:72px}
+
+/* SPLASH */
 #splash{
   position:fixed;
   inset:0;
@@ -88,7 +78,7 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:1000;
+  z-index:3000;
 }
 #splashContent{
   background:var(--glass);
@@ -102,7 +92,6 @@ body{
   font-family:'Bebas Neue';
   font-size:3.4rem;
   letter-spacing:4px;
-  margin:0;
 }
 #splash button{
   margin-top:32px;
@@ -118,62 +107,43 @@ body{
 header{
   position:sticky;
   top:0;
-  background:
-    linear-gradient(180deg, rgba(10,132,255,.12), transparent),
-    rgba(2,6,23,.65);
-  backdrop-filter:blur(26px);
+  background:rgba(2,6,23,.7);
+  backdrop-filter:blur(24px);
   padding:20px;
   text-align:center;
-  z-index:20;
 }
 header h1{
   font-family:'Bebas Neue';
   background:linear-gradient(90deg,var(--blue),var(--green));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  margin:0;
 }
 
 /* FILTER */
 #filterWrap{margin-top:12px}
 select{
-  background:
-    linear-gradient(135deg, rgba(10,132,255,.25), rgba(48,209,88,.25)),
-    var(--glassSoft);
+  background:var(--glassSoft);
   border:1px solid var(--border);
   padding:12px 22px;
   border-radius:999px;
   color:white;
 }
 
-/* GALLERY (POP) */
+/* GALLERY */
 #gallery{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:34px;
   padding:40px;
 }
 .art{
   position:relative;
-  background:
-    linear-gradient(180deg, rgba(10,132,255,.18), rgba(48,209,88,.12)),
-    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
-  backdrop-filter:blur(30px) saturate(160%);
-  border:1px solid rgba(255,255,255,.28);
+  background:var(--glass);
+  backdrop-filter:blur(26px);
+  border:1px solid var(--border);
   border-radius:28px;
   padding:20px;
   cursor:pointer;
-  overflow:hidden;
-}
-.art::before{
-  content:"";
-  position:absolute;
-  inset:-50%;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(10,132,255,.45), transparent 55%),
-    radial-gradient(circle at 70% 80%, rgba(48,209,88,.45), transparent 55%);
-  opacity:.35;
-  pointer-events:none;
 }
 .art img{
   width:100%;
@@ -189,39 +159,47 @@ select{
 }
 
 /* BANNERS */
-.offerBanner{
+.offerBanner,.soldBanner{
   position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
+  bottom:0; left:0; right:0;
   padding:12px;
-  background:linear-gradient(90deg,var(--red),#ff9f0a);
   text-align:center;
   border-radius:0 0 28px 28px;
 }
-.soldBanner{
-  position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
-  padding:12px;
-  background:linear-gradient(90deg,var(--green),var(--blue));
-  text-align:center;
-  border-radius:0 0 28px 28px;
-  font-weight:600;
+.offerBanner{background:linear-gradient(90deg,var(--red),#ff9f0a)}
+.soldBanner{background:linear-gradient(90deg,var(--green),var(--blue))}
+
+/* IN PROGRESS */
+#progress{
+  display:none;
+  padding:40px;
+  max-width:900px;
+  margin:auto;
+}
+.progressItem{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:28px;
+}
+.progressItem img{
+  width:100%;
+  max-height:420px;
+  object-fit:contain;
+  border-radius:16px;
+  margin-bottom:12px;
 }
 
-/* VIEWER */
+/* VIEWER (SCROLL FIX INCLUDED) */
 #viewer{
   display:none;
   position:fixed;
   inset:0;
-  background:
-    radial-gradient(circle at top, rgba(10,132,255,.25), transparent 45%),
-    radial-gradient(circle at bottom, rgba(48,209,88,.25), transparent 45%),
-    rgba(2,6,23,.92);
+  background:rgba(2,6,23,.92);
   backdrop-filter:blur(32px);
-  z-index:999;
+  z-index:2000;
+  overflow-y:auto; /* ← SCROLL FIX */
 }
 #viewer img{
   width:100%;
@@ -230,10 +208,7 @@ select{
 }
 #viewerContent{
   margin:24px;
-  background:
-    linear-gradient(180deg, rgba(10,132,255,.18), rgba(48,209,88,.12)),
-    var(--glass);
-  backdrop-filter:blur(30px);
+  background:var(--glass);
   border-radius:30px;
   padding:26px;
 }
@@ -244,24 +219,17 @@ select{
   color:var(--blue);
   cursor:pointer;
 }
-.fullscreenHint{
-  text-align:center;
-  font-size:.75rem;
-  opacity:.6;
-}
 
 /* FORM */
 form{margin-top:20px}
 label{display:block;margin-top:16px}
-input, textarea{
+input,textarea{
   width:100%;
   padding:16px;
   margin-top:6px;
   border-radius:16px;
   border:1px solid var(--border);
-  background:
-    linear-gradient(135deg, rgba(10,132,255,.18), rgba(48,209,88,.12)),
-    rgba(255,255,255,.12);
+  background:rgba(255,255,255,.12);
   color:white;
 }
 button.submit{
@@ -278,12 +246,13 @@ button.submit{
 
 <body>
 
-<div id="soldNotice">
-  <div id="soldNoticeContent">
-    <span>This artwork has been sold and will be removed from the gallery in approximately two days.</span>
-    <button onclick="dismissSoldNotice()">Dismiss</button>
-  </div>
+<div id="sidebar">
+  <div class="sideBtn active" onclick="showGallery(this)">Gallery</div>
+  <div class="sideBtn" onclick="showProgress(this)">In&nbsp;Progress</div>
+  <div class="sideBtn" onclick="goHome()">Menu</div>
 </div>
+
+<main>
 
 <div id="splash">
   <div id="splashContent">
@@ -305,34 +274,9 @@ button.submit{
 </header>
 
 <div id="gallery"></div>
+<div id="progress"></div>
 
-<div id="viewer">
-  <button id="backBtn" onclick="closeViewer()">← Back</button>
-  <img id="viewImage" onclick="goFullscreen()">
-  <div class="fullscreenHint">Click image to view in full screen</div>
-
-  <div id="viewerContent">
-    <h2 id="viewTitle"></h2>
-
-    <form id="offerForm" action="https://formspree.io/f/xgoooqgd" method="POST">
-      <input type="hidden" name="Artwork" id="artName">
-
-      <label>Full Name</label>
-      <input type="text" name="Name" required>
-
-      <label>Your Offer (minimum $20)</label>
-      <input type="number" name="Offer" min="20" required>
-
-      <label>Phone Number</label>
-      <input type="tel" name="Phone" required>
-
-      <label>Message (optional)</label>
-      <textarea name="Message"></textarea>
-
-      <button class="submit" type="submit">Send Offer</button>
-    </form>
-  </div>
-</div>
+</main>
 
 <script>
 document.addEventListener("contextmenu",e=>{
@@ -340,81 +284,81 @@ document.addEventListener("contextmenu",e=>{
 });
 
 const repo="sladenb23/sladenb23.github.io";
-let allArt=[];
+let gallery=[],progress=[];
 
-function enterSite(){
-  document.getElementById("splash").style.display="none";
+function enterSite(){splash.style.display="none"}
+function goHome(){splash.style.display="flex"}
+
+function showGallery(btn){
+  setActive(btn);
+  galleryDiv.style.display="grid";
+  progressDiv.style.display="none";
+}
+function showProgress(btn){
+  setActive(btn);
+  galleryDiv.style.display="none";
+  progressDiv.style.display="block";
+}
+function setActive(btn){
+  document.querySelectorAll(".sideBtn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
 }
 
-function dismissSoldNotice(){
-  document.getElementById("soldNotice").style.display="none";
-}
+const galleryDiv=document.getElementById("gallery");
+const progressDiv=document.getElementById("progress");
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r=>r.json())
 .then(issues=>{
-  allArt=issues.map(i=>{
+  issues.forEach(i=>{
     const lines=i.body.split("\n");
     const get=k=>lines.find(l=>l.startsWith(k))?.replace(k,"").trim();
-    const img=get("Image:");
-    if(!img) return null;
-    return{
+    const item={
       title:i.title,
-      image:img,
-      type:get("Type:")||"Other",
-      offer:get("Offer:"),
-      offeredBy:get("OfferedBy:"),
-      soldTo:get("SoldTo:")
+      image:get("Image:"),
+      type:get("Type:"),
+      status:get("Status:"),
+      soldTo:get("SoldTo:"),
+      description:get("Description:")
     };
-  }).filter(Boolean);
-  render("All");
+    if(item.status==="InProgress") progress.push(item);
+    else if(item.image) gallery.push(item);
+  });
+  renderGallery("All");
+  renderProgress();
 });
 
 function applyFilter(){
-  render(document.getElementById("typeFilter").value);
+  renderGallery(typeFilter.value);
 }
 
-function render(type){
-  const g=document.getElementById("gallery");
-  g.innerHTML="";
-  allArt.filter(a=>type==="All"||a.type===type)
-  .forEach(a=>{
+function renderGallery(type){
+  galleryDiv.innerHTML="";
+  gallery.filter(a=>type==="All"||a.type===type).forEach(a=>{
     const d=document.createElement("div");
     d.className="art";
     d.innerHTML=`
       <img src="${a.image}">
       <div class="detailHint">Click to see more details</div>
-      ${a.soldTo
-        ? `<div class="soldBanner">SOLD to ${a.soldTo}</div>`
-        : (a.offer && a.offeredBy)
-          ? `<div class="offerBanner">${a.offeredBy} offered $${a.offer}</div>`
-          : ""}
+      ${a.soldTo?`<div class="soldBanner">SOLD to ${a.soldTo}</div>`:""}
     `;
     d.onclick=()=>openViewer(a);
-    g.appendChild(d);
+    galleryDiv.appendChild(d);
   });
 }
 
-function openViewer(a){
-  document.getElementById("viewImage").src=a.image;
-  document.getElementById("viewTitle").innerText=a.title;
-  document.getElementById("artName").value=a.title;
-
-  const form=document.getElementById("offerForm");
-  form.style.display = a.soldTo ? "none" : "block";
-
-  document.getElementById("soldNotice").style.display = a.soldTo ? "block" : "none";
-  document.getElementById("viewer").style.display="block";
-}
-
-function closeViewer(){
-  document.getElementById("viewer").style.display="none";
-  dismissSoldNotice();
-}
-
-function goFullscreen(){
-  const img=document.getElementById("viewImage");
-  if(img.requestFullscreen) img.requestFullscreen();
+function renderProgress(){
+  progressDiv.innerHTML="";
+  progress.forEach(p=>{
+    const d=document.createElement("div");
+    d.className="progressItem";
+    d.innerHTML=`
+      <h3>${p.title}</h3>
+      ${p.image?`<img src="${p.image}">`:""}
+      <p>${p.description||""}</p>
+    `;
+    progressDiv.appendChild(d);
+  });
 }
 </script>
 
