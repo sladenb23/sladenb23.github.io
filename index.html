@@ -18,9 +18,8 @@
   --red:#ff453a;
 }
 
-*{
-  box-sizing:border-box;
-}
+/* RESET */
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -120,40 +119,75 @@ select{
 /* GALLERY */
 #gallery{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:26px;
-  padding:32px;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:30px;
+  padding:36px;
 }
 
+/* ART CARD */
 .art{
-  background:var(--glass);
-  backdrop-filter:blur(26px) saturate(140%);
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:18px;
   position:relative;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.18),
+    rgba(255,255,255,.08)
+  );
+  backdrop-filter:blur(28px) saturate(150%);
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:28px;
+  padding:20px;
   cursor:pointer;
-  box-shadow:0 20px 60px rgba(0,0,0,.35);
-  transition:transform .35s ease, box-shadow .35s ease;
+  box-shadow:
+    0 25px 60px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.25);
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s ease;
+  overflow:hidden;
 }
 
+/* glow accent */
+.art::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:
+    radial-gradient(circle at top left,
+      rgba(10,132,255,.35),
+      transparent 55%);
+  opacity:.35;
+  pointer-events:none;
+}
+
+/* hover lift */
 .art:hover{
-  transform:translateY(-6px) scale(1.01);
-  box-shadow:0 35px 90px rgba(0,0,0,.45);
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:
+    0 40px 90px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.35);
 }
 
+/* IMAGE */
 .art img{
   width:100%;
   max-height:320px;
   object-fit:contain;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at center,
+      rgba(255,255,255,.08),
+      rgba(0,0,0,.25));
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.35);
 }
 
+/* DETAIL HINT */
 .detailHint{
-  margin-top:10px;
+  margin-top:12px;
   text-align:center;
   font-size:.8rem;
-  opacity:.65;
-  font-family:'Inter';
+  opacity:.7;
+  letter-spacing:.08em;
 }
 
 /* OFFER BANNER */
@@ -162,12 +196,12 @@ select{
   bottom:0;
   left:0;
   right:0;
-  background:linear-gradient(90deg,var(--red),#ff7b6f);
-  text-align:center;
-  padding:10px;
-  font-size:.85rem;
+  padding:12px;
+  background:linear-gradient(90deg,var(--red),#ff9f0a);
   font-weight:600;
-  border-radius:0 0 26px 26px;
+  text-align:center;
+  border-radius:0 0 28px 28px;
+  box-shadow:0 -10px 30px rgba(0,0,0,.35);
 }
 
 /* VIEWER */
