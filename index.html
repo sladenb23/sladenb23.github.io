@@ -303,9 +303,11 @@ function renderGallery(type){
       <div class="detailHint">Click to see more details</div>
       ${a.soldTo?`<div class="soldBanner">SOLD to ${a.soldTo}</div>`:""}
     `;
+    d.onclick = () => openViewer(a);  // ← THIS IS THE FIX
     galleryDiv.appendChild(d);
   });
 }
+
 
 function renderProgress(){
   progressDiv.innerHTML="";
