@@ -59,6 +59,7 @@ body{
   cursor:pointer;
   font-size:.7rem;
   opacity:.65;
+  text-align:center;
 }
 .sideBtn.active{
   background:linear-gradient(135deg,var(--blue),var(--green));
@@ -129,13 +130,19 @@ select{
   color:white;
 }
 
-/* GALLERY */
+/* SECTIONS */
+#gallery,#progress,#sold{
+  padding:40px;
+  display:none;
+}
+
 #gallery{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:34px;
-  padding:40px;
 }
+
+/* ART CARD */
 .art{
   position:relative;
   background:var(--glass);
@@ -143,7 +150,6 @@ select{
   border:1px solid var(--border);
   border-radius:28px;
   padding:20px;
-  cursor:pointer;
 }
 .art img{
   width:100%;
@@ -169,13 +175,23 @@ select{
 .offerBanner{background:linear-gradient(90deg,var(--red),#ff9f0a)}
 .soldBanner{background:linear-gradient(90deg,var(--green),var(--blue))}
 
-/* IN PROGRESS */
-#progress{
-  display:none;
-  padding:40px;
-  max-width:900px;
-  margin:auto;
+/* SOLD LIST */
+.soldItem{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:20px;
+  margin-bottom:28px;
 }
+.soldItem img{
+  width:100%;
+  max-height:360px;
+  object-fit:contain;
+  border-radius:18px;
+  margin-bottom:12px;
+}
+
+/* IN PROGRESS */
 .progressItem{
   background:var(--glass);
   border:1px solid var(--border);
@@ -190,57 +206,6 @@ select{
   border-radius:16px;
   margin-bottom:12px;
 }
-
-/* VIEWER (SCROLL FIX INCLUDED) */
-#viewer{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.92);
-  backdrop-filter:blur(32px);
-  z-index:2000;
-  overflow-y:auto; /* ← SCROLL FIX */
-}
-#viewer img{
-  width:100%;
-  max-height:60vh;
-  object-fit:contain;
-}
-#viewerContent{
-  margin:24px;
-  background:var(--glass);
-  border-radius:30px;
-  padding:26px;
-}
-#backBtn{
-  margin:18px;
-  background:none;
-  border:none;
-  color:var(--blue);
-  cursor:pointer;
-}
-
-/* FORM */
-form{margin-top:20px}
-label{display:block;margin-top:16px}
-input,textarea{
-  width:100%;
-  padding:16px;
-  margin-top:6px;
-  border-radius:16px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.12);
-  color:white;
-}
-button.submit{
-  margin-top:26px;
-  width:100%;
-  padding:18px;
-  border:none;
-  border-radius:999px;
-  background:linear-gradient(135deg,var(--blue),var(--green));
-  cursor:pointer;
-}
 </style>
 </head>
 
@@ -249,6 +214,7 @@ button.submit{
 <div id="sidebar">
   <div class="sideBtn active" onclick="showGallery(this)">Gallery</div>
   <div class="sideBtn" onclick="showProgress(this)">In&nbsp;Progress</div>
+  <div class="sideBtn" onclick="showSold(this)">Sold</div>
   <div class="sideBtn" onclick="goHome()">Menu</div>
 </div>
 
@@ -275,30 +241,21 @@ button.submit{
 
 <div id="gallery"></div>
 <div id="progress"></div>
+<div id="sold"></div>
 
 </main>
 
 <script>
-document.addEventListener("contextmenu",e=>{
-  if(e.target.tagName==="IMG") e.preventDefault();
-});
-
 const repo="sladenb23/sladenb23.github.io";
-let gallery=[],progress=[];
+let gallery=[],progress=[],sold=[];
 
 function enterSite(){splash.style.display="none"}
 function goHome(){splash.style.display="flex"}
 
-function showGallery(btn){
-  setActive(btn);
-  galleryDiv.style.display="grid";
-  progressDiv.style.display="none";
-}
-function showProgress(btn){
-  setActive(btn);
-  galleryDiv.style.display="none";
-  progressDiv.style.display="block";
-}
+function showGallery(btn){setActive(btn);galleryDiv.style.display="grid";progressDiv.style.display="none";soldDiv.style.display="none"}
+function showProgress(btn){setActive(btn);galleryDiv.style.display="none";progressDiv.style.display="block";soldDiv.style.display="none"}
+function showSold(btn){setActive(btn);galleryDiv.style.display="none";progressDiv.style.display="none";soldDiv.style.display="block"}
+
 function setActive(btn){
   document.querySelectorAll(".sideBtn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
@@ -306,6 +263,7 @@ function setActive(btn){
 
 const galleryDiv=document.getElementById("gallery");
 const progressDiv=document.getElementById("progress");
+const soldDiv=document.getElementById("sold");
 
 fetch(`https://api.github.com/repos/${repo}/issues`)
 .then(r=>r.json())
@@ -319,13 +277,16 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
       type:get("Type:"),
       status:get("Status:"),
       soldTo:get("SoldTo:"),
+      offer:get("Offer:"),
       description:get("Description:")
     };
     if(item.status==="InProgress") progress.push(item);
+    else if(item.soldTo) sold.push(item);
     else if(item.image) gallery.push(item);
   });
   renderGallery("All");
   renderProgress();
+  renderSold();
 });
 
 function applyFilter(){
@@ -342,7 +303,6 @@ function renderGallery(type){
       <div class="detailHint">Click to see more details</div>
       ${a.soldTo?`<div class="soldBanner">SOLD to ${a.soldTo}</div>`:""}
     `;
-    d.onclick=()=>openViewer(a);
     galleryDiv.appendChild(d);
   });
 }
@@ -358,6 +318,22 @@ function renderProgress(){
       <p>${p.description||""}</p>
     `;
     progressDiv.appendChild(d);
+  });
+}
+
+function renderSold(){
+  soldDiv.innerHTML="";
+  sold.forEach(s=>{
+    const d=document.createElement("div");
+    d.className="soldItem";
+    d.innerHTML=`
+      <h3>${s.title}</h3>
+      ${s.image?`<img src="${s.image}">`:""}
+      <p><strong>Sold to:</strong> ${s.soldTo}</p>
+      ${s.offer?`<p><strong>Price:</strong> $${s.offer}</p>`:""}
+      ${s.description?`<p>${s.description}</p>`:""}
+    `;
+    soldDiv.appendChild(d);
   });
 }
 </script>
