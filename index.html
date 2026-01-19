@@ -150,6 +150,7 @@ select{
   border:1px solid var(--border);
   border-radius:28px;
   padding:20px;
+  cursor:pointer;
 }
 .art img{
   width:100%;
@@ -206,6 +207,57 @@ select{
   border-radius:16px;
   margin-bottom:12px;
 }
+
+/* VIEWER (SCROLL FIX INCLUDED) */
+#viewer{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.92);
+  backdrop-filter:blur(32px);
+  z-index:2000;
+  overflow-y:auto;
+}
+#viewer img{
+  width:100%;
+  max-height:60vh;
+  object-fit:contain;
+}
+#viewerContent{
+  margin:24px;
+  background:var(--glass);
+  border-radius:30px;
+  padding:26px;
+}
+#backBtn{
+  margin:18px;
+  background:none;
+  border:none;
+  color:var(--blue);
+  cursor:pointer;
+}
+
+/* FORM */
+form{margin-top:20px}
+label{display:block;margin-top:16px}
+input,textarea{
+  width:100%;
+  padding:16px;
+  margin-top:6px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.12);
+  color:white;
+}
+button.submit{
+  margin-top:26px;
+  width:100%;
+  padding:18px;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -245,16 +297,66 @@ select{
 
 </main>
 
+<!-- VIEWER OVERLAY (RESTORED) -->
+<div id="viewer">
+  <button id="backBtn" onclick="closeViewer()">← Back</button>
+  <img id="viewImage" onclick="goFullscreen()">
+  <div id="viewerContent">
+    <h2 id="viewTitle"></h2>
+
+    <form id="offerForm" action="https://formspree.io/f/xgoooqgd" method="POST">
+      <input type="hidden" name="Artwork" id="artName">
+
+      <label>Full Name</label>
+      <input type="text" name="Name" required>
+
+      <label>Your Offer (minimum $20)</label>
+      <input type="number" name="Offer" min="20" required>
+
+      <label>Phone Number</label>
+      <input type="tel" name="Phone" required>
+
+      <label>Message (optional)</label>
+      <textarea name="Message"></textarea>
+
+      <button class="submit" type="submit">Send Offer</button>
+    </form>
+  </div>
+</div>
+
 <script>
 const repo="sladenb23/sladenb23.github.io";
 let gallery=[],progress=[],sold=[];
+let currentView="gallery";
 
 function enterSite(){splash.style.display="none"}
 function goHome(){splash.style.display="flex"}
 
-function showGallery(btn){setActive(btn);galleryDiv.style.display="grid";progressDiv.style.display="none";soldDiv.style.display="none"}
-function showProgress(btn){setActive(btn);galleryDiv.style.display="none";progressDiv.style.display="block";soldDiv.style.display="none"}
-function showSold(btn){setActive(btn);galleryDiv.style.display="none";progressDiv.style.display="none";soldDiv.style.display="block"}
+function showGallery(btn){
+  currentView="gallery";
+  setActive(btn);
+  galleryDiv.style.display="grid";
+  progressDiv.style.display="none";
+  soldDiv.style.display="none";
+  renderGallery(typeFilter.value);
+}
+
+function showProgress(btn){
+  currentView="progress";
+  setActive(btn);
+  galleryDiv.style.display="none";
+  progressDiv.style.display="block";
+  soldDiv.style.display="none";
+}
+
+function showSold(btn){
+  currentView="sold";
+  setActive(btn);
+  galleryDiv.style.display="none";
+  progressDiv.style.display="none";
+  soldDiv.style.display="block";
+  renderSold(typeFilter.value);
+}
 
 function setActive(btn){
   document.querySelectorAll(".sideBtn").forEach(b=>b.classList.remove("active"));
@@ -274,7 +376,7 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
     const item={
       title:i.title,
       image:get("Image:"),
-      type:get("Type:"),
+      type:get("Type:")||"Other",
       status:get("Status:"),
       soldTo:get("SoldTo:"),
       offer:get("Offer:"),
@@ -286,11 +388,12 @@ fetch(`https://api.github.com/repos/${repo}/issues`)
   });
   renderGallery("All");
   renderProgress();
-  renderSold();
+  renderSold("All");
 });
 
 function applyFilter(){
-  renderGallery(typeFilter.value);
+  if(currentView==="gallery") renderGallery(typeFilter.value);
+  if(currentView==="sold") renderSold(typeFilter.value);
 }
 
 function renderGallery(type){
@@ -303,6 +406,7 @@ function renderGallery(type){
       <div class="detailHint">Click to see more details</div>
       ${a.soldTo?`<div class="soldBanner">SOLD to ${a.soldTo}</div>`:""}
     `;
+    d.onclick=()=>openViewer(a);
     galleryDiv.appendChild(d);
   });
 }
@@ -321,9 +425,9 @@ function renderProgress(){
   });
 }
 
-function renderSold(){
+function renderSold(type){
   soldDiv.innerHTML="";
-  sold.forEach(s=>{
+  sold.filter(s=>type==="All"||s.type===type).forEach(s=>{
     const d=document.createElement("div");
     d.className="soldItem";
     d.innerHTML=`
@@ -335,6 +439,24 @@ function renderSold(){
     `;
     soldDiv.appendChild(d);
   });
+}
+
+/* VIEWER */
+function openViewer(a){
+  viewImage.src=a.image;
+  viewTitle.innerText=a.title;
+  artName.value=a.title;
+
+  offerForm.style.display = a.soldTo ? "none" : "block";
+  viewer.style.display="block";
+}
+
+function closeViewer(){
+  viewer.style.display="none";
+}
+
+function goFullscreen(){
+  if(viewImage.requestFullscreen) viewImage.requestFullscreen();
 }
 </script>
 
