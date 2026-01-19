@@ -150,7 +150,6 @@ select{
   border:1px solid var(--border);
   border-radius:28px;
   padding:20px;
-  cursor:pointer;
 }
 .art img{
   width:100%;
@@ -304,7 +303,6 @@ function renderGallery(type){
       <div class="detailHint">Click to see more details</div>
       ${a.soldTo?`<div class="soldBanner">SOLD to ${a.soldTo}</div>`:""}
     `;
-    d.onclick = () => openViewer(a);   // ← ONLY CHANGE
     galleryDiv.appendChild(d);
   });
 }
